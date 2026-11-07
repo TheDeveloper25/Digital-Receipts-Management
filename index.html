@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DRM - Digital Receipts Management</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* =========================================================
+       PALETA DE COLORES: MINIMALISTA MONOCROMÁTICA (GRIS, BLANCO Y NEGRO)
+       ========================================================= */
+    :root {
+      --bg-main: #0f1115;          /* Fondo general de la app */
+      --bg-card: #181b20;          /* Fondo de tarjetas y paneles */
+      --bg-card-hover: #22262e;    /* Hover de elementos interactivos */
+      --border-color: #2e333d;     /* Bordes y separadores */
+      --text-primary: #ffffff;      /* Texto principal / Títulos */
+      --text-secondary: #a0a6b2;    /* Texto secundario */
+      --text-muted: #6c757d;        /* Texto atenuado */
+      --badge-bg: #282c34;          /* Fondo de etiquetas */
+      --badge-text: #e0e6ed;        /* Texto de etiquetas */
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* POSICIONAMIENTO: Navbar Fija */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      background-color: #14171d;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* FLOTANTES (CSS Floats) */
+    .float-sponsor-banner {
+      float: right;
+      width: 280px;
+      margin-left: 20px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background-color: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+    }
+
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    /* FLEXBOX: Contenedores Flexibles */
+    .flex-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .flex-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* GRID: Galería de Recibos y Características */
+    .receipts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    /* Tarjetas y Paneles */
+    .card, .archive-card, .pricing-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      transition: transform 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+    }
+
+    .card:hover, .archive-card:hover, .pricing-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--text-secondary);
+      background-color: var(--bg-card-hover);
+    }
+
+    /* POSICIONAMIENTO ABSOLUTO / RELATIVO */
+    .badge-relative-container {
+      position: relative;
+    }
+
+    .badge-absolute-top {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+
+    /* Estilos para las Imágenes de Recibos */
+    .receipt-img-container {
+      background-color: #000000;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .receipt-img-container img {
+      max-height: 220px;
+      width: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .receipt-img-container img:hover {
+      transform: scale(1.03);
+    }
+
+    /* Botones Monocromáticos */
+    .btn-primary {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      border-color: #ffffff !important;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #e0e0e0 !important;
+      border-color: #e0e0e0 !important;
+    }
+
+    .btn-outline-light {
+      color: #ffffff !important;
+      border-color: var(--border-color) !important;
+    }
+
+    .btn-outline-light:hover {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+
+    /* Badges */
+    .badge {
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #0a0b0d;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ENCABEZADO Y NAVEGACIÓN (Semántica: <header>, <nav>) -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark py-3">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2 font-monospace fw-bold fs-4" href="#">
+          <i class="fas fa-receipt text-white"></i> DRM <span class="fs-6 fw-normal text-secondary">v2.4</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="#archive" id="nav-archive-link"><i class="fas fa-box-archive me-1"></i> Mi Archivo</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#fleet" id="nav-fleet-link"><i class="fas fa-car me-1"></i> Control de Flota</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#plans" id="nav-plans-link"><i class="fas fa-tags me-1"></i> Planes</a>
+            </li>
+          </ul>
+          <div class="flex-header-actions">
+            <!-- Selector de Idioma -->
+            <select class="form-select form-select-sm bg-dark text-white border-secondary" id="languageSelect" onchange="changeLanguage(this.value)" style="width: 110px;">
+              <option value="es" selected>Español</option>
+              <option value="en">English</option>
+            </select>
+            <button class="btn btn-outline-light btn-sm"><i class="fab fa-apple me-1"></i> Sync iCloud</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL (Semántica: <main>) -->
+  <main class="container my-5">
+
+    <!-- HERO SECTION CON FLOTANTE (CSS Float Banner) -->
+    <section class="p-4 p-md-5 rounded-3 border border-secondary mb-5 clearfix" style="background-color: var(--bg-card);">
+      <!-- Banner de Auspiciadores Flotante (Float) -->
+      <aside class="float-sponsor-banner text-center d-none d-md-block">
+        <span class="badge mb-2">Auspiciador Destacado</span>
+        <h6 class="fw-bold mb-1">AutoZone Puerto Rico</h6>
+        <p class="small text-secondary mb-2">Baterías y repuestos con garantía digital integrada en tu cuenta DRM.</p>
+        <button class="btn btn-sm btn-outline-light w-100">Ver Oferta</button>
+      </aside>
+
+      <div class="row align-items-center">
+        <div class="col-lg-7 pe-md-3">
+          <span class="badge text-uppercase tracking-wider mb-2" id="hero-tag">Gestión Inteligente</span>
+          <h1 class="display-5 fw-bold text-white mb-3" id="hero-title">Recibos y Garantías Digitalizados</h1>
+          <p class="lead text-secondary mb-4" id="hero-desc">
+            Archiva tus comprobantes al toque de un botón. Clasifica garantías de enseres, autos y equipos con alertas automáticas de vencimiento y sincronización en tu propio iCloud.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mb-3">
+            <a href="#archive" class="btn btn-primary btn-lg" id="hero-btn-archive"><i class="fas fa-box-archive me-2"></i> Explorar Archivo</a>
+            <button class="btn btn-outline-light btn-lg"><i class="fas fa-plus me-2"></i> Subir Recibo</button>
+          </div>
+        </div>
+
+        <!-- Muestra de Foto de Recibo Digital en Hero -->
+        <div class="col-lg-5 text-center mt-4 mt-lg-0">
+          <div class="receipt-img-container p-2 shadow">
+            <img src="Foto%20digital%20jpg.jpg" alt="Foto Digital Receipt" class="img-fluid rounded">
+            <div class="small text-secondary mt-1"><i class="fas fa-camera me-1"></i> Recibo Capturado en DRM</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METRICAS (CSS Grid) -->
+    <section class="features-grid mb-5">
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-secondary small">Deducibles Hacienda</div>
+            <div class="fs-4 fw-bold text-white">$1,485.50</div>
+          </div>
+          <i class="fas fa-file-invoice-dollar fs-2 text-secondary"></i>
+        </div>
+      </div>
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-secondary small">Garantías Activas</div>
+            <div class="fs-4 fw-bold text-white">8 Equipos</div>
+          </div>
+          <i class="fas fa-shield-halved fs-2 text-secondary"></i>
+        </div>
+      </div>
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-secondary small">Consumo Flota (Vs Recibos)</div>
+            <div class="fs-4 fw-bold text-white">94% Precisión</div>
+          </div>
+          <i class="fas fa-gas-pump fs-2 text-secondary"></i>
+        </div>
+      </div>
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-secondary small">Almacenamiento iCloud</div>
+            <div class="fs-4 fw-bold text-white">45.2 MB</div>
+          </div>
+          <i class="fab fa-cloudscale fs-2 text-secondary"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE ARCHIVO DIGITAL (CSS Flexbox + Grid) -->
+    <section id="archive" class="mb-5">
+      <div class="flex-filter-bar mb-4">
+        <div>
+          <h2 class="fw-bold mb-0 text-white" id="section-archive-title"><i class="fas fa-box-archive me-2 text-secondary"></i> Archivo Digital DRM</h2>
+          <p class="text-secondary small mb-0">Control total de gastos personales, vehículos y hogar.</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-light active">Todos</button>
+          <button class="btn btn-sm btn-outline-light">Garantías</button>
+          <button class="btn btn-sm btn-outline-light">Deducibles</button>
+          <button class="btn btn-sm btn-outline-light">Flota</button>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Recibos (Grid) -->
+      <div class="receipts-grid">
+
+        <!-- Tarjeta 1: Con la Foto Digital JPG incorporada -->
+        <div class="archive-card p-3 rounded badge-relative-container">
+          <span class="badge badge-absolute-top"><i class="fas fa-image me-1"></i> Digital</span>
+          <h5 class="fw-bold mb-1 text-white">Recibo Digitalizado</h5>
+          <p class="text-secondary small mb-2">Fecha: 07 Nov 2026 | Total: $85.50</p>
+          
+          <!-- Contenedor con la foto guardada en tu proyecto -->
+          <div class="receipt-img-container mb-3 p-1">
+            <img src="Foto%20digital%20jpg.jpg" alt="Foto Digital Receipts DRM" class="img-fluid rounded">
+          </div>
+
+          <div class="p-2 mb-3 rounded" style="background-color: var(--bg-main);">
+            <div class="small fw-semibold text-white"><i class="fas fa-check me-1"></i> Estado: Deducible Hacienda</div>
+            <div class="small text-secondary">Sincronizado con almacenamiento personal.</div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge border-secondary text-secondary">Compra Ropa / Zapatos</span>
+            <button class="btn btn-sm btn-outline-light"><i class="fas fa-magnifying-glass me-1"></i> Ampliar</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2: Auto / Mecánica -->
+        <div class="archive-card p-3 rounded badge-relative-container">
+          <span class="badge badge-absolute-top"><i class="fas fa-car me-1"></i> Auto</span>
+          <h5 class="fw-bold mb-1 text-white">Pep Boys - Batería AGM</h5>
+          <p class="text-secondary small mb-2">Fecha: 15 May 2026 | Total: $189.99</p>
+          <div class="p-2 mb-3 rounded" style="background-color: var(--bg-main);">
+            <div class="small fw-semibold text-white"><i class="fas fa-clock me-1"></i> Garantía: 3 Años (Vence May 2029)</div>
+            <div class="small text-secondary">Recordatorio programado para vencimiento.</div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge border-secondary text-secondary">Reembolsable</span>
+            <button class="btn btn-sm btn-outline-light"><i class="fas fa-eye me-1"></i> Ver Recibo</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3: Enseres / Hogar -->
+        <div class="archive-card p-3 rounded badge-relative-container">
+          <span class="badge badge-absolute-top"><i class="fas fa-tv me-1"></i> Enseres</span>
+          <h5 class="fw-bold mb-1 text-white">Sears - Nevera Smart</h5>
+          <p class="text-secondary small mb-2">Fecha: 10 Ene 2026 | Total: $1,249.00</p>
+          <div class="p-2 mb-3 rounded" style="background-color: var(--bg-main);">
+            <div class="small fw-semibold text-white"><i class="fas fa-clock me-1"></i> Garantía: 5 Años (Vence Ene 2031)</div>
+            <div class="small text-secondary">Compresor cubierto por el fabricante.</div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge border-secondary text-secondary">Deducible Hacienda</span>
+            <button class="btn btn-sm btn-outline-light"><i class="fas fa-eye me-1"></i> Ver Recibo</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4: Flota de Autos -->
+        <div class="archive-card p-3 rounded badge-relative-container" id="fleet">
+          <span class="badge badge-absolute-top"><i class="fas fa-gas-pump me-1"></i> Flota #04</span>
+          <h5 class="fw-bold mb-1 text-white">Gasolinera Shell - Combustible</h5>
+          <p class="text-secondary small mb-2">Fecha: 02 Nov 2026 | Total: $65.00</p>
+          <div class="p-2 mb-3 rounded" style="background-color: var(--bg-main);">
+            <div class="small fw-semibold text-white"><i class="fas fa-check-circle me-1"></i> Consumo Real vs Recibo</div>
+            <div class="small text-secondary">GPS: 14.2 Gal. | Recibo: 14.2 Gal. (100% Match)</div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge border-secondary text-secondary">Gasto Comercial</span>
+            <button class="btn btn-sm btn-outline-light"><i class="fas fa-eye me-1"></i> Ver Recibo</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN DE PLANES Y SUSCRIPCIONES -->
+    <section id="plans" class="py-4">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold text-white">Planes y Suscripciones DRM</h2>
+        <p class="text-secondary">Conectando al comerciante con el cliente mediante un modelo accesible.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Plan Cliente -->
+        <div class="col-md-6">
+          <div class="pricing-card p-4 rounded h-100 d-flex flex-column justify-content-between">
+            <div>
+              <span class="badge mb-2">Plan Cliente</span>
+              <h3 class="fw-bold text-white">$2.00 <span class="fs-6 fw-normal text-secondary">/ mes</span></h3>
+              <p class="text-secondary small mb-4">Para usuarios individuales que buscan organizar sus gastos y garantías sin guardar papel.</p>
+              <ul class="list-unstyled text-secondary small mb-4">
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Almacenaje en tu propio iCloud personal.</li>
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Recordatorios de vencimiento por mes y año.</li>
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Organización instantánea para Hacienda / Contable.</li>
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Sin fee por espacio excedente (Manejas tu almacenamiento).</li>
+              </ul>
+            </div>
+            <button class="btn btn-outline-light w-100">Suscribirme ($2.00)</button>
+          </div>
+        </div>
+
+        <!-- Plan Comerciante -->
+        <div class="col-md-6">
+          <div class="pricing-card p-4 rounded h-100 d-flex flex-column justify-content-between" style="border-color: #ffffff !important;">
+            <div>
+              <span class="badge mb-2">Plan Comerciante</span>
+              <h3 class="fw-bold text-white">$5.00 <span class="fs-6 fw-normal text-secondary">/ 1er negocio ($2.00 adic.)</span></h3>
+              <p class="text-secondary small mb-4">Conecta tu negocio directamente con tus clientes enviando recibos y garantías digitales.</p>
+              <ul class="list-unstyled text-secondary small mb-4">
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Emisión directa de garantías a la App del cliente.</li>
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Módulo de verificación de flota para clientes corporativos.</li>
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Opción de integración con auspiciadores.</li>
+                <li class="mb-2"><i class="fas fa-check text-white me-2"></i> $2.00 por cada localidad o negocio adicional.</li>
+              </ul>
+            </div>
+            <button class="btn btn-primary w-100">Registrar Comerciante ($5.00)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PIE DE PÁGINA (Semántica: <footer>) -->
+  <footer class="py-5 mt-5">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <h5 class="fw-bold text-white mb-3"><i class="fas fa-receipt me-2"></i>DRM</h5>
+          <p class="small text-secondary">
+            Digital Receipts Management es el sistema estándar para la eliminación de recibos de papel, control de garantías y auditoría de gastos deducibles.
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h6 class="fw-bold text-white mb-3">Navegación Rápida</h6>
+          <ul class="list-unstyled small">
+            <li class="mb-1"><a href="#archive" class="text-secondary text-decoration-none">Archivo Digital</a></li>
+            <li class="mb-1"><a href="#fleet" class="text-secondary text-decoration-none">Auditoría de Flota</a></li>
+            <li class="mb-1"><a href="#plans" class="text-secondary text-decoration-none">Planes de Suscripción</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h6 class="fw-bold text-white mb-3">Soporte Multilenguaje</h6>
+          <p class="small text-secondary mb-2">Disponible en varios idiomas con almacenamiento privado en iCloud.</p>
+          <span class="badge border-secondary text-secondary">Español</span>
+          <span class="badge border-secondary text-secondary">English</span>
+        </div>
+      </div>
+      <div class="border-top border-secondary pt-3 text-center small text-secondary">
+        &copy; 2026 Digital Receipts Management (DRM). Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script Multilenguaje -->
+  <script>
+    const translations = {
+      es: {
+        navArchive: '<i class="fas fa-box-archive me-1"></i> Mi Archivo',
+        navFleet: '<i class="fas fa-car me-1"></i> Control de Flota',
+        navPlans: '<i class="fas fa-tags me-1"></i> Planes',
+        heroTag: "Gestión Inteligente",
+        heroTitle: "Recibos y Garantías Digitalizados",
+        heroDesc: "Archiva tus comprobantes al toque de un botón. Clasifica garantías de enseres, autos y equipos con alertas automáticas de vencimiento y sincronización en tu propio iCloud.",
+        heroBtnArchive: '<i class="fas fa-box-archive me-2"></i> Explorar Archivo',
+        sectionArchiveTitle: '<i class="fas fa-box-archive me-2 text-secondary"></i> Archivo Digital DRM'
+      },
+      en: {
+        navArchive: '<i class="fas fa-box-archive me-1"></i> My Archive',
+        navFleet: '<i class="fas fa-car me-1"></i> Fleet Control',
+        navPlans: '<i class="fas fa-tags me-1"></i> Plans',
+        heroTag: "Smart Management",
+        heroTitle: "Digitized Receipts & Warranties",
+        heroDesc: "Archive your receipts with the touch of a button. Categorize warranties for appliances, vehicles, and equipment with automatic expiration alerts and iCloud sync.",
+        heroBtnArchive: '<i class="fas fa-box-archive me-2"></i> Explore Archive',
+        sectionArchiveTitle: '<i class="fas fa-box-archive me-2 text-secondary"></i> DRM Digital Archive'
+      }
+    };
+
+    function changeLanguage(lang) {
+      document.getElementById('nav-archive-link').innerHTML = translations[lang].navArchive;
+      document.getElementById('nav-fleet-link').innerHTML = translations[lang].navFleet;
+      document.getElementById('nav-plans-link').innerHTML = translations[lang].navPlans;
+      document.getElementById('hero-tag').innerText = translations[lang].heroTag;
+      document.getElementById('hero-title').innerText = translations[lang].heroTitle;
+      document.getElementById('hero-desc').innerText = translations[lang].heroDesc;
+      document.getElementById('hero-btn-archive').innerHTML = translations[lang].heroBtnArchive;
+      document.getElementById('section-archive-title').innerHTML = translations[lang].sectionArchiveTitle;
+    }
+  </script>
+</body>
+</html>

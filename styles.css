@@ -1,0 +1,106 @@
+/* =========================================================
+   PALETA DE COLORES: ESCALA DE GRISES / MONOCROMÁTICO
+   ========================================================= */
+
+:root {
+  /* Colores Principales */
+  --bg-main: #0f1115;          /* Fondo principal de la página (Gris muy oscuro / Casi negro) */
+  --bg-card: #181b20;          /* Fondo de tarjetas y contenedores (Gris oscuro) */
+  --bg-card-hover: #22262e;    /* Hover sobre tarjetas */
+  --border-color: #2e333d;     /* Bordes y líneas divisorias de elementos */
+
+  /* Textos */
+  --text-primary: #ffffff;      /* Texto principal / Encabezados (Blanco puro) */
+  --text-secondary: #a0a6b2;    /* Texto secundario / Subtítulos (Gris claro) */
+  --text-muted: #6c757d;        /* Texto atenuado / Leyendas (Gris medio) */
+
+  /* Colores de Acento Monocromáticos */
+  --accent-white: #ffffff;      /* Botones primarios o detalles destacados (Blanco) */
+  --accent-gray: #3a3f4d;       /* Botones secundarios / Elementos interactivos */
+  --accent-dark: #121418;       /* Fondos profundos */
+  
+  /* Indicadores de Estado en Monocromo */
+  --badge-bg: #282c34;          /* Fondo de etiquetas o badges */
+  --badge-text: #e0e6ed;        /* Texto de etiquetas */
+}
+
+/* =========================================================
+   REEMPLAZO DE ESTILOS CSS EXISTENTES
+   ========================================================= */
+
+/* Body y estructura global */
+body {
+  background-color: var(--bg-main) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Tarjetas y Contenedores */
+.card, 
+.pricing-card, 
+.vault-card, 
+.stat-card {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.card:hover, 
+.pricing-card:hover, 
+.vault-card:hover {
+  border-color: var(--text-secondary) !important;
+  background-color: var(--bg-card-hover) !important;
+}
+
+/* Botones Monocromáticos */
+.btn-primary {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #e0e0e0 !important;
+  border-color: #e0e0e0 !important;
+}
+
+.btn-outline-primary,
+.btn-outline-secondary {
+  color: #ffffff !important;
+  border-color: #4a4e58 !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Navegación y Encabezados */
+.navbar, header {
+  background-color: #14171d !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: var(--text-secondary) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+  color: #ffffff !important;
+}
+
+/* Badges y Etiquetas de Garantía / Estado */
+.badge {
+  background-color: var(--badge-bg) !important;
+  color: var(--badge-text) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Footer y Secciones Secundarias */
+footer {
+  background-color: #0a0b0d !important;
+  border-top: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
